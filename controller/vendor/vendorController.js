@@ -1,4 +1,3 @@
-import { json } from "express";
 import { validatePassword, getSignature } from "../../helper/index.js";
 import { FoodModel } from "../../models/index.js";
 import { findVendor } from "../../service/vendorServices.js";
@@ -299,8 +298,46 @@ export const getFoods = async (req, res) => {
 
 //delete food
 
-export const deleteFood = async (req,res)=>{
+export const deleteFood = async (req, res) => {
+  try {
+    const foodId = req.params.id;
+    const vendor = await findVendor(req.user._id);
 
-  const vendor = await findVendor(req.user._id);
+    if (vendor == null) {
+      res.status(400).json({
+        status: false,
+        results: 0,
+        data: {},
+        message: "vendor not found",
+      });
+    } else {
+      const deletaRes = await FoodModel.findOneAndDelete({ _id: foodId });
+      if (deletaRes) {
+        vendor.foods.pop(deletaRes);
+        const foodDeleteData = await vendor.save();
 
-}
+        res.status(200).json({
+          status: false,
+          results: 0,
+          data: {},
+          message: "deleted successfully",
+        });
+      } else {
+        console.log("no Content");
+        res.status(400).json({
+          status: false,
+          results: 0,
+          data: {},
+          message: "no food found",
+        });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      results: 0,
+      data: {},
+      message: error.message,
+    });
+  }
+};

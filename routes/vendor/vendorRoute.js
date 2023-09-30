@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addFood,
+  deleteFood,
   getFoods,
   updateVendorProfile,
   updateVendorService,
@@ -37,7 +38,7 @@ router.patch("/service", updateVendorService);
 //food
 router.post("/food", uploadImage, addFood);
 router.get("/foods", getFoods);
-router.delete("/:id", deleteFood);
+router.delete("/food/:id", deleteFood);
 
 
 export { router as vendorRouer };

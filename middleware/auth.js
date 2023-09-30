@@ -1,7 +1,4 @@
-import express from "express";
 import { validateSignature } from "../helper/index.js";
-
-
 
 export const authentication = async (req, res, next) => {
   const validate = await validateSignature(req);
