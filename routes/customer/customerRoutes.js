@@ -1,5 +1,5 @@
 import express from "express";
-import { addToCart, cancelOrder, getOTP, getProfile, logOut, orderList, placeOrder, reOrder, registration, removeCart, removeFromCart, verifyOTP } from "../../controller/index.js";
+import { addToCart, cancelOrder, editProfile, getOTP, getProfile, logOut, orderList, placeOrder, reOrder, registration, removeCart, removeFromCart, verifyOTP } from "../../controller/index.js";
 import { authentication } from "../../middleware/auth.js";
 const router = express.Router()
 // -----------------------auth--------------------
@@ -21,7 +21,17 @@ router.use(authentication);
 router.get('/',getProfile)
 router.get('/logout',logOut)
 //update profile
-router.patch('/edit')
+router.patch('/edit',editProfile)
+
+
+// -----------------------cart--------------------
+
+//add to cart
+router.post('/add-to-cart',addToCart);
+//remove from cart
+router.delete('/remove-cart',removeCart);
+//remove from cart by ID
+router.delete('/remove-cart/:id',removeFromCart);
 
 
 // -----------------------orders--------------------
@@ -35,14 +45,6 @@ router.delete('/order/:id',cancelOrder)
 //re-order
 router.post('/re-order',reOrder)
 
-// -----------------------cart--------------------
-
-//add to cart
-router.post('/add-to-cart',addToCart);
-//remove from cart
-router.delete('/remove-cart',removeCart);
-//remove from cart by ID
-router.delete('/remove-cart/:id',removeFromCart);
 
 
 

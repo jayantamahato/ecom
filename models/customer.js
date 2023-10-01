@@ -14,12 +14,7 @@ const CustomerSchema = new Schema(
     address: { type: [Object] },
     lat: { type: Number },
     lng: { type: Number },
-    cart: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: "cart",
-      },
-    ],
+    cart: {type:[Object]},
     orders: [
       {
         type: mongoose.Schema.ObjectId,

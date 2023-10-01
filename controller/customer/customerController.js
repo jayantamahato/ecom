@@ -9,8 +9,8 @@ import {
   sendOTP,
   validatePhone,
 } from "../../helper/index.js";
-import { CustomerModel } from "../../models/index.js";
-import { checkExistingUser } from "../../service/index.js";
+import { Cartmodel, CustomerModel, FoodModel } from "../../models/index.js";
+import { checkExistingCustomer } from "../../service/index.js";
 
 //get OTP
 
@@ -49,11 +49,11 @@ export const verifyOTP = async (req, res) => {
 
   try {
     if (await checkOTP(otp, mobileNo)) {
-      if (checkExistingUser(mobileNo).length != 0) {
+      if (checkExistingCustomer(mobileNo).length != 0) {
         return res.status(200).json({
           status: true,
           results: 0,
-          data: checkExistingUser,
+          data: checkExistingCustomer,
           message: "otp verified",
         });
       }
@@ -86,7 +86,7 @@ export const registration = async (req, res) => {
     req.body;
 
   try {
-    const result = await checkExistingUser(phone);
+    const result = await checkExistingCustomer(phone);
     if (result.length > 0) {
       return res.status(400).json({
         status: false,
@@ -121,7 +121,7 @@ export const registration = async (req, res) => {
         status: true,
         results: result.length,
         data: await getSignature(payload),
-        message: "user created",
+        message: "customer created",
       });
     }
   } catch (error) {
@@ -175,6 +175,8 @@ export const getProfile = async (req, res) => {
   }
 };
 
+
+//logout 
 export const logOut = async (req, res) => {
   try {
     if (req.user) {
@@ -217,42 +219,64 @@ export const logOut = async (req, res) => {
 };
 
 //edit profile
-export const editProfile = async(req,res)=>{
+export const editProfile = async (req, res) => {
+  const { firstName, lastName, email, address, lat, long } = req.body;
 
-}
+  try {
+    const result = await checkExistingCustomer(req.user.phone);
+    if (result != null) {
+      result.first_name = firstName;
+      result.last_name = lastName;
+      result.email = email;
+      result.address = address;
+      result.lat = lat;
+      result.lng = long;
+
+      const updateResult = await result.save();
+
+      if (updateResult) {
+        return res.status(200).json({
+          status: true,
+          results: updateResult.length,
+          data: updateResult,
+          message: "customer updated",
+        });
+      } else {
+        return res.status(400).json({
+          status: false,
+          results: 0,
+          data: {},
+          message: "not updated",
+        });
+      }
+    } else {
+      return res.status(400).json({
+        status: false,
+        results: 0,
+        data: {},
+        message: "customer does not exsist",
+      });
+    }
+  } catch (error) {
+    return res.status(400).json({
+      status: false,
+      results: 0,
+      data: {},
+      message: error.message,
+    });
+  }
+};
+
+
 //place order
-
-export const placeOrder =async (req,res)=>{
-
-}
+export const placeOrder = async (req, res) => {};
 //order list
 
-export const orderList = async(req,res)=>{
+export const orderList = async (req, res) => {};
 
-}
+//cancel order
 
-//cancel order 
-
-export const cancelOrder = async(req,res)=>{
-
-}
+export const cancelOrder = async (req, res) => {};
 //reorder
 
-export const reOrder=async(req,res)=>{
-
-}
-
-//add to cart
-
-export const addToCart = async(req,res)=>{
-
-}
-
-//remove-cart  whole
-export const removeCart=async(req,res)=>{
-
-}
-//remove item from cart
-export const removeFromCart = async (req,res)=>{
-
-}
+export const reOrder = async (req, res) => {};
